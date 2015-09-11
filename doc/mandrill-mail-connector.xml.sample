@@ -1,0 +1,3 @@
+<!-- BEGIN_INCLUDE(mandrill-mail:greet) -->
+    <mandrill-mail:greet config-ref="" friend="#[map-payload:friend]" />
+<!-- END_INCLUDE(mandrill-mail:greet) -->
