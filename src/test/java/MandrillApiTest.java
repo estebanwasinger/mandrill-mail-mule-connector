@@ -19,7 +19,7 @@ public class MandrillApiTest {
     MandrillTemplate template;
     @Before
     public void setup() throws IOException, MandrillApiError {
-        mandrillApi = new MandrillApi("Q6n5lFTiJCX51XPtbcT-ig");
+        mandrillApi = new MandrillApi("");
         template = mandrillApi.templates().info("Welcome Anypoint Platform");
     }
 
@@ -53,12 +53,13 @@ public class MandrillApiTest {
     }
 
     @Test
-    public void testParseTemplate(){
+    public void testParseTemplate() throws IOException, MandrillApiError {
        // System.out.println(template.getCode());
-        for (String s : getHolders(template.getCode())) {
-            System.out.println(s);
+        for (MandrillTemplate mandrillTemplate : Arrays.asList(mandrillApi.templates().list())) {
+            for (String s : getHolders(mandrillTemplate.getCode())) {
+                System.out.println(s);
+            }
         }
-        ;
     }
 
     private Set<String> getHolders(String template){

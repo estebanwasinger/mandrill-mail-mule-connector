@@ -41,18 +41,18 @@ public class TemplateCategory {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         MandrillTemplate template = connector.getConfig().getClient().templates().info(key.getId());
+        DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key.getDisplayName());
 
-        DynamicObjectBuilder<?> holders = builder.createDynamicObject(key.getDisplayName());
-
-        for (String holder : getHolders(template.getCode())) {
-            holders.addSimpleField(holder, DataType.STRING);
+        for (String holder : getHolders(template.getCode())){
+            dynamicObject.addSimpleField(holder, DataType.STRING);
         }
+
         return new DefaultMetaData(builder.build());
     }
 
     private Set<String> getHolders(String template){
         Set<String> holders = new HashSet<>();
-        Pattern pattern = Pattern.compile("\\*\\|(.*)\\|\\*");
+        Pattern pattern = Pattern.compile("\\*\\|(\\S+)\\|\\*");
         Matcher matcher = pattern.matcher(template);
         while(matcher.find()){
             holders.add(matcher.group(1));

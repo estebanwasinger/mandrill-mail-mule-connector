@@ -9,8 +9,9 @@ import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.display.Placement;
-import org.mule.api.annotations.param.Optional;
-import org.mule.api.annotations.param.*;
+import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.MetaDataKeyParam;
+import org.mule.api.annotations.param.MetaDataKeyParamAffectsType;
 import org.mule.modules.mandrillmail.config.ConnectorConfig;
 import org.mule.modules.mandrillmail.metadata.TemplateCategory;
 
@@ -30,13 +31,12 @@ public class MandrillMailConnector {
      * @param fromName
      * @param recipientEmail
      * @param recipientName
-     * @param tags
      * @return
      * @throws IOException
      * @throws MandrillApiError
      */
     @Processor
-    public List<MandrillMessageStatus> sendEmail(@Placement(group = "Message") String subject, @Placement(group = "Message") @Default(value = "#[payload]") String body, @Placement(group = "Message") String fromEmail, @Placement(group = "Message") String fromName, @Placement(group = "Recipient") String recipientEmail, @Placement(group = "Recipient") String recipientName, @Placement(group = "Other") List<String> tags) throws IOException, MandrillApiError {
+    public List<MandrillMessageStatus> sendEmail(@Placement(group = "Message") String subject, @Placement(group = "Message") @Default(value = "#[payload]") String body, @Placement(group = "Sender") String fromEmail, @Placement(group = "Sender") String fromName, @Placement(group = "Recipient") String recipientEmail, @Placement(group = "Recipient") String recipientName) throws IOException, MandrillApiError {
         MandrillApi mandrillApi = getConfig().getClient();
         MandrillMessage message = new MandrillMessage();
         message.setSubject(subject);
@@ -51,13 +51,11 @@ public class MandrillMailConnector {
         recipients.add(recipient);
         message.setTo(recipients);
         message.setPreserveRecipients(true);
-        message.setTags(tags);
         MandrillMessageStatus[] messageStatusReports = mandrillApi.messages().send(message, false);
         return Arrays.asList(messageStatusReports);
     }
 
     /**
-     * 
      * @param templateName
      * @param subject
      * @param parameters
@@ -65,14 +63,13 @@ public class MandrillMailConnector {
      * @param fromName
      * @param recipientEmail
      * @param recipientName
-     * @param tags
      * @return
      * @throws IOException
      * @throws MandrillApiError
      */
     @Processor
     @MetaDataScope(TemplateCategory.class)
-    public List<MandrillMessageStatus> sendTemplateEmail(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.INPUT) String templateName, @Placement(group = "Message") String subject, @Placement(group = "Message") @Default(value = "#[payload]") Map<String,Object> parameters, @Placement(group = "Message") String fromEmail, @Placement(group = "Message") String fromName, @Placement(group = "Recipient") String recipientEmail, @Placement(group = "Recipient") String recipientName, @Placement(group = "Other") @Optional List<String> tags) throws IOException, MandrillApiError {
+    public List<MandrillMessageStatus> sendTemplateEmail(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.INPUT) String templateName, @Placement(group = "Message") String subject, @Placement(group = "Message") @Default(value = "#[payload]") Map<String, String> parameters, @Placement(group = "Sender") String fromEmail, @Placement(group = "Sender") String fromName, @Placement(group = "Recipient") String recipientEmail, @Placement(group = "Recipient") String recipientName) throws IOException, MandrillApiError {
         MandrillMessage message = new MandrillMessage();
         message.setSubject(subject);
         message.setAutoText(true);
@@ -87,7 +84,7 @@ public class MandrillMailConnector {
         message.setPreserveRecipients(true);
         List<MandrillMessage.MergeVar> mergeVars = new ArrayList<>();
         for (String key : parameters.keySet()) {
-            mergeVars.add(new MandrillMessage.MergeVar(key,(String) parameters.get(key)));
+            mergeVars.add(new MandrillMessage.MergeVar(key, parameters.get(key)));
         }
 
         message.setGlobalMergeVars(mergeVars);
