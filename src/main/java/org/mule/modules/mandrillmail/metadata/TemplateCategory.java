@@ -47,7 +47,9 @@ public class TemplateCategory {
             dynamicObject.addSimpleField(holder, DataType.STRING);
         }
 
-        return new DefaultMetaData(builder.build());
+        DefaultMetaData defaultMetaData = new DefaultMetaData(builder.build());
+//        defaultMetaData.addProperty(MetaDataPropertyScope.FLOW, "Recipients", new DefaultListMetaDataModel(new DefaultPojoMetaDataModel(MandrillMessage.Recipient.class)));
+        return defaultMetaData;
     }
 
     private Set<String> getHolders(String template){

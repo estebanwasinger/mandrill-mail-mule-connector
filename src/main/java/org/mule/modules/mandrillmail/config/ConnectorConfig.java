@@ -1,6 +1,7 @@
 package org.mule.modules.mandrillmail.config;
 
 import com.microtripit.mandrillapp.lutung.MandrillApi;
+import com.microtripit.mandrillapp.lutung.view.MandrillUserInfo;
 import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.annotations.*;
@@ -23,7 +24,7 @@ public class ConnectorConfig {
         throws ConnectionException {
         mandrillApi = new MandrillApi(apiKey);
         try {
-            mandrillApi.messages();
+            MandrillUserInfo info = mandrillApi.users().info();
         }catch (Exception e){
             throw new ConnectionException(ConnectionExceptionCode.UNKNOWN,e.getMessage(),e.getMessage());
         }
