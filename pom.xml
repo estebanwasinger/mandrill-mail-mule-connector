@@ -7,7 +7,7 @@
     <artifactId>mandrill-mail-connector</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>mule-module</packaging>
-    <name>Mule MandrillMail Anypoint Connector</name>
+    <name>Mule MandrillMail Anypoint Convvvvnector</name>
 
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
